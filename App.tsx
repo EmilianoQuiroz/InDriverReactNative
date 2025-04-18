@@ -1,14 +1,6 @@
-import {
-  Button,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  Touchable,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import DefaultRoundedButton from "./presentation/components/DefaultRoundedButton";
+import DefaultTextInput from "./presentation/components/DefaultTextInput";
 
 export default function App() {
   return (
@@ -20,28 +12,21 @@ export default function App() {
       <View style={styles.form}>
         <Image style={styles.imageUser} source={require("./assets/user.png")} />
         <Text style={styles.textLogin}>Login</Text>
-        <View style={styles.containerTextInput}>
-          <Image
-            source={require("./assets/email.png")}
-            style={styles.textInputIcon}
-          />
-          <TextInput
-            placeholder="Contraseña"
-            placeholderTextColor="#fff"
-            style={styles.textInput}
-          />
-        </View>
-        <View style={styles.containerTextInput}>
-          <Image
-            source={require("./assets/password.png")}
-            style={styles.textInputIcon}
-          />
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#fff"
-            style={styles.textInput}
-          />
-        </View>
+        <DefaultTextInput
+          icon={require("./assets/email.png")}
+          placeholder="Email"
+          onChangeText={(text) => {}}
+          value=""
+          keyboardType="email-address"
+        />
+        <DefaultTextInput
+          icon={require("./assets/password.png")}
+          placeholder="Password"
+          onChangeText={(text) => {}}
+          value=""
+          secureTextEntry={true}
+          keyboardType="default"
+        />
         <DefaultRoundedButton
           text="Iniciar sesion"
           onPress={() => {}}
@@ -93,30 +78,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: "center",
   },
-  textInput: {
-    borderBottomWidth: 1,
-    width: "90%",
-    height: 50,
-    borderBottomColor: "#fff",
-    color: "#fff",
-    fontSize: 18,
-  },
   textDontHaveAccount: {
     color: "#fff",
-  },
-  containerTextInput: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  textInputIcon: {
-    width: 25,
-    height: 25,
-    marginRight: 15,
   },
   containerTextDontHaveAccount: {
     alignItems: "center",
     justifyContent: "center",
     marginTop: 15,
-  }
+  },
 });
