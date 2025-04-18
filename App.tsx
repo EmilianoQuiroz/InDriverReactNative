@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import DefaultRoundedButton from "./presentation/components/DefaultRoundedButton";
 
 export default function App() {
   return (
@@ -41,15 +42,19 @@ export default function App() {
             style={styles.textInput}
           />
         </View>
-        <TouchableOpacity style={styles.roundedButton}>
-          <Text style={styles.textButton}>Iniciar sesion</Text>
-        </TouchableOpacity>
+        <DefaultRoundedButton
+          text="Iniciar sesion"
+          onPress={() => {}}
+          backgroundColor="red"
+        />
         <View style={styles.containerTextDontHaveAccount}>
           <Text style={styles.textDontHaveAccount}>¿No tienes cuenta?</Text>
         </View>
-        <TouchableOpacity style={styles.roundedButton}>
-          <Text style={styles.textButton}>Registrate</Text>
-        </TouchableOpacity>
+        <DefaultRoundedButton
+          text="Registrate"
+          onPress={() => {}}
+          backgroundColor="black"
+        />
       </View>
     </View>
   );
@@ -108,20 +113,6 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 15,
-  },
-  roundedButton: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 15,
-    marginTop: 25,
-  },
-  textButton: {
-    color: "#000",
-    fontSize: 18,
-    fontWeight: "bold",
   },
   containerTextDontHaveAccount: {
     alignItems: "center",
