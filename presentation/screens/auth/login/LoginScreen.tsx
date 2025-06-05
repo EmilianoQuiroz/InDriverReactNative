@@ -6,6 +6,9 @@ import { RootStackParamList } from "../../../navigator/MainStackNavigator";
 import styles from "./Styles";
 import { useState } from "react";
 import EmailValidator from "../../../utils/EmailValidator";
+import { ApiRequestHandler } from "../../../../data/sources/remote/api/ApiRequestHandler";
+import { AuthResponse } from "../../../../domain/models/AuthResponse";
+import { defaultErrorResponse, ErrorResponse } from "../../../../domain/models/ErrorResponse";
 
 interface Props extends StackScreenProps<RootStackParamList, "LoginScreen"> {}
 
@@ -13,18 +16,43 @@ export default function LoginScreen({ navigation, route }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async() => {
     if (email === "" || password === "") {
       Alert.alert("Error", "El correo y la contraseña son obligatorios");
       return;
     }
-    if (!EmailValidator(email)) {
-      Alert.alert("Error", "El correo electronico no es valido");
-      return;
-    }
-    console.log("Email: ", email);
-    console.log("Password: ", password);
+    // if (!EmailValidator(email)) {
+    //   Alert.alert("Error", "El correo electronico no es valido");
+    //   return;
+    // }
+    await login(email, password);
   };
+
+  const login = async (email: string, password: string): Promise<AuthResponse | ErrorResponse> => {
+    try {
+      const response = await ApiRequestHandler.post<AuthResponse>('/auth/login', {
+        email: email,
+        password: password,
+      });
+      console.log('Respuesta del servidor', response.data);
+      return response.data;
+    } catch (error:any) {
+      if(error.response){
+      const errorData: ErrorResponse = error.response.data
+      if (Array.isArray(errorData.message)) {
+        console.error('Errores multiples del servidor', errorData.message.join(', '));
+      }
+      else {
+        console.error('Error en el servidor', errorData.message);
+      } 
+      return errorData;   
+      }
+      else {
+        console.error('Error en la peticion', error.message)
+        return defaultErrorResponse;
+      }
+    }
+  }
 
   return (
     <View style={styles.container}>
