@@ -9,50 +9,38 @@ import EmailValidator from "../../../utils/EmailValidator";
 import { ApiRequestHandler } from "../../../../data/sources/remote/api/ApiRequestHandler";
 import { AuthResponse } from "../../../../domain/models/AuthResponse";
 import { defaultErrorResponse, ErrorResponse } from "../../../../domain/models/ErrorResponse";
+import { LoginViewModel } from "./LoginViewModel";
+import { LoginUseCase } from "../../../../domain/useCases/auth/LoginUseCase";
+import { AuthService } from "../../../../data/sources/remote/services/AuthService";
+import { AuthRepositoryImpl } from "../../../../data/repository/AuthRepositoryImpl";
 
 interface Props extends StackScreenProps<RootStackParamList, "LoginScreen"> {}
 
 export default function LoginScreen({ navigation, route }: Props) {
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const authService = new AuthService()
+  const authRepository = new AuthRepositoryImpl(authService);
+  const loginUseCase = new LoginUseCase(authRepository);
+  const loginViewModel = new LoginViewModel(loginUseCase);
 
   const handleLogin = async() => {
     if (email === "" || password === "") {
       Alert.alert("Error", "El correo y la contraseña son obligatorios");
       return;
     }
-    // if (!EmailValidator(email)) {
-    //   Alert.alert("Error", "El correo electronico no es valido");
-    //   return;
-    // }
-    await login(email, password);
+   if (!EmailValidator(email)) {
+       Alert.alert("Error", "El correo electronico no es valido");
+       return;
+     }
+    
+    const response = await loginViewModel.login(email, password);
+
+    console.log("Respuesta del login", response);
   };
 
-  const login = async (email: string, password: string): Promise<AuthResponse | ErrorResponse> => {
-    try {
-      const response = await ApiRequestHandler.post<AuthResponse>('/auth/login', {
-        email: email,
-        password: password,
-      });
-      console.log('Respuesta del servidor', response.data);
-      return response.data;
-    } catch (error:any) {
-      if(error.response){
-      const errorData: ErrorResponse = error.response.data
-      if (Array.isArray(errorData.message)) {
-        console.error('Errores multiples del servidor', errorData.message.join(', '));
-      }
-      else {
-        console.error('Error en el servidor', errorData.message);
-      } 
-      return errorData;   
-      }
-      else {
-        console.error('Error en la peticion', error.message)
-        return defaultErrorResponse;
-      }
-    }
-  }
 
   return (
     <View style={styles.container}>
